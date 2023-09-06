@@ -1,0 +1,37 @@
+version: '3.9'
+services:
+  nginx-proxy:
+    container_name: nginx-proxy
+    image: jc21/nginx-proxy-manager
+    restart: always
+    ports:
+      - 82:80
+      - 81:81
+      - 443:443
+    volumes:
+      - ./data:/data
+      - ./letsencrypt:/etc/letsencrypt
+
+  portainer:
+    container_name: portainer
+    image: portainer/portainer-ee:latest
+    command: -H unix:///var/run/docker.sock
+    environment:
+      # - VIRTUAL_HOST=portainer.yourdomain.com
+      - VIRTUAL_PORT=9000
+    ports:
+      - 8000:8000
+      - 9000:9000
+      - 9443:9443
+    volumes:
+      - portainer_data:/data
+      - /var/run/docker.sock:/var/run/docker.sock
+    restart: always
+    networks:
+      - portainer_network
+
+networks:
+  portainer_network:
+
+volumes:
+  portainer_data:
